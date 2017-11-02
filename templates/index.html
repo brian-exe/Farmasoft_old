@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    
+    {% if current_user.is_authenticated %}
+        Hi {{ current_user.name }}!
+    {% endif %}
+  <p class="col-md-2"> Esto es un texto cualquiera que estoy escribiendo para poder rellenar este parrafo del orto porque no tengo un editor que me autogenere el ipsummm no se que carajo</p>
+    <p class="col-md-4"> Esto es un texto cualquiera que estoy escribiendo para poder rellenar este parrafo del orto porque no tengo un editor que me autogenere el ipsummm no se que carajo</p>
+    <p class="col-md-6"> Esto es un texto cualquiera que estoy escribiendo para poder rellenar este parrafo del orto porque no tengo un editor que me autogenere el ipsummm no se que carajo</p>
+{% endblock %}
+

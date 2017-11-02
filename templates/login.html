@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="/static/stylesheets/login_style.css">
+{% endblock %}
+
+{% block title %}
+Listar Archivo
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="card card-container">
+        <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+        <p id="profile-name" class="profile-name-card"></p>
+        <form class="form-signin" method="POST" action="#">
+            <span id="reauth-email" class="reauth-email"></span>
+            {{ form.csrf_token }}</br>
+            {{ form.name.label }} {{ form.name(size=20) }}</br>
+            {{ form.password.label }} {{ form.password(size=20) }}</br>
+            <!--<div id="remember" class="checkbox">
+                <label>
+                    <input type="checkbox" value="remember-me"> Remember me
+                </label>
+            </div>-->
+            {{ form.submit }}
+            <!--<button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>-->
+        </form>
+        <a href="#" class="forgot-password">
+            Forgot the password?
+        </a>
+    </div><!-- /card-container -->
+</div>
+
+{% endblock %}

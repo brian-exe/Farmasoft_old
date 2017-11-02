@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}
+Listar Archivo
+{% endblock %}
+
+
+{% block content %}
+<h1>Listado de productos</h1>
+<hr>
+
+<div class="container">
+    <table class="table table-striped">
+        <tr>
+        {% for item in model[0] %}
+            <th>
+            {{ item }}
+            </th>
+        {% endfor %}
+        </tr>
+        {% for i in range(1,model|length) %}
+        <tr>
+            {% for j in range(model[i]|length)%}
+                <td>                    
+                    {{ model[i][j] }}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+<a href="AgregarVenta"> Agregar Producto</a>
+</div>
+{% endblock %}
+
