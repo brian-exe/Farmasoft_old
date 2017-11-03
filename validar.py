@@ -1,6 +1,6 @@
 import csv
 
-class ValidacionException(Exception):
+class ValidationException(Exception):
     def __init__(self,message=''):
         self.message=message
     def __repr__(self):
@@ -9,55 +9,59 @@ class ValidacionException(Exception):
 class Validador():
     def __init__(self, path=''):
         self.filePath=path
-        self.icodigo=0
-        self.icliente=0
-        self.iproducto=0
-        self.icantidad=0
-        self.iprecio=0
+        self.cabecera={}
+        self.cabecera['icodigo']=-1
+        self.cabecera['icliente']=-1
+        self.cabecera['iproducto']=-1
+        self.cabecera['icantidad']=-1
+        self.cabecera['iprecio']=-1
         
     def validar_archivo(self):
         if (self.filePath == ''):
             raise ValidationException('Error, la ruta al archivo no está configurada')
         else:
             numLinea=0
-            with open(self.filePath,'r') as f:
-                reader= csv.reader(f)
-                for linea in reader:
-                    if(numLinea == 0):
-                        self.setCabecera(linea)
-                        numLinea+=1
-                    else:
-                        self.comprobarCantidadCampos(linea,numLinea)
-                        
-                        cliente=linea[self.icliente]
-                        codigo=linea[self.icodigo]
-                        producto=linea[self.iproducto]
-                        cantidad=linea[self.icantidad]
-                        precio=linea[self.iprecio]
-                        
-                        self.comprobarCampoVacio(codigo,numLinea)
-                        self.comprobarEntero(cantidad,numLinea)
-                        self.comprobarDecimal(precio,numLinea)
-                        numLinea+=1
+            try:
+                with open(self.filePath,'r') as f:
+                    reader= csv.reader(f)
+                    for linea in reader:
+                        if(numLinea == 0):
+                            self.setCabecera(linea)
+                            numLinea+=1
+                        else:
+                            self.comprobarCantidadCampos(linea,numLinea)
+                            
+                            cliente=linea[self.cabecera['icliente']]
+                            codigo=linea[self.cabecera['icodigo']]
+                            producto=linea[self.cabecera['iproducto']]
+                            cantidad=linea[self.cabecera['icantidad']]
+                            precio=linea[self.cabecera['iprecio']]
+                            
+                            self.comprobarCampoVacio(codigo,numLinea)
+                            self.comprobarEntero(cantidad,numLinea)
+                            self.comprobarDecimal(precio,numLinea)
+                            numLinea+=1
+            except ValueError:
+                raise ValidationException('Error, el archivo no existe, o no se puede abrir.')
         return True
                         
     def setCabecera(self,listaCabecera):
         cantCabecera=0
         for i in range(len(listaCabecera)):
             if listaCabecera[i]=='CLIENTE':
-                self.icliente=i
+                self.cabecera['icliente']=i
                 cantCabecera+=1
             if listaCabecera[i] =='CODIGO':
-                self.icodigo=i
+                self.cabecera['icodigo']=i
                 cantCabecera+=1
             if listaCabecera[i] =='PRODUCTO':
-                self.iproducto=i
+                self.cabecera['iproducto']=i
                 cantCabecera+=1
             if listaCabecera[i] =='CANTIDAD':
-                self.icantidad=i
+                self.cabecera['icantidad']=i
                 cantCabecera+=1
             if listaCabecera[i] =='PRECIO':
-                self.iprecio=i
+                self.cabecera['iprecio']=i
                 cantCabecera+=1
         if (cantCabecera !=5):
                 raise ValidationException('Error, la cabecera es incorrecta')

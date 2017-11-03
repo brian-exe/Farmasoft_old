@@ -33,3 +33,13 @@ singup_style.css
     </div><!-- /card-container -->
 </div>
 {% endblock %}
+
+{% block scripts%}
+{{ super() }}
+<script>
+    {% if (mostrar_mje) %}
+        alert("Se agregó Correctamente!");
+        window.location.href = "/index";
+    {% endif %}
+</script>
+{% endblock %}

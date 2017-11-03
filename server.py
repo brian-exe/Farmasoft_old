@@ -9,6 +9,7 @@ from wtforms.validators import *
 from flask_login import LoginManager, login_user, login_required, logout_user
 from formularios import *
 from AdminDB import *
+from validar import ValidationException
 import csv
 
 class User():
@@ -76,12 +77,12 @@ def index():
 @app.route('/lista',methods=['GET'])
 @login_required
 def listarCsv():
-    admin = AdminDB('archivo.csv')
-    resultado=admin.validar_archivo()
-    if ( resultado == True):
+    try:
+        admin = AdminDB('archivo.csv')
         archivo = admin.dame_list_archivo()
         return render_template('lista.html',model=archivo)
-    return render_template('customError.html', mensaje=resultado )
+    except ValidationException as e:
+        return render_template('customError.html', mensaje=e.message )
     
 @app.route('/AgregarVenta',methods=['GET'])
 @login_required
@@ -104,7 +105,7 @@ def agregarVPost():
 def altaG():
     form = FormularioAlta()
             
-    return render_template('alta.html',form=form)
+    return render_template('alta.html',form=form,mostrar_mje=False)
     
 @app.route('/alta',methods=['POST'])
 def altaP():
@@ -115,13 +116,32 @@ def altaP():
             return "Los passwords no coinciden!!! Hdp!"
         else:
             admin.agregar(form.username.data,form.password.data)
-            return "USUARIO AGREGADO CORRECTAMENTE!"
+            return render_template('alta.html',form=form,mostrar_mje=True)
             
     return render_template('alta.html',form=form)
 
 @login_manager.user_loader
 def load_user(user_id):
     return UserRepository('usuarios.csv').getUser(user_id)
+    
+@app.route('/productosCliente',methods=['GET'])
+@login_required
+def prodXClienteG():
+    admin=AdminDB('archivo.csv')
+    lista=admin.get_lista_clientes()
+    return render_template('prodXCliente.html',lista_clientes=lista)
+
+@app.route('/productosCliente/<cliente_name>',methods=['GET'])
+@login_required
+def prodXClienteP(cliente_name):
+    admin=AdminDB('archivo.csv')
+    lista_productos=admin.get_productos_de_cliente(cliente_name)
+    lista_clientes=admin.get_lista_clientes()
+    return render_template('prodXCliente.html',lista_clientes=lista_clientes,lista_productos=lista_productos)
+
+#@app.route('/productosCliente',methods=['POST'])
+#@login_required
+#def prodXClienteP():
     
 @app.route('/login', methods=['GET'])
 def loginG():
