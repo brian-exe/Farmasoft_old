@@ -138,11 +138,22 @@ def prodXClienteP(cliente_name):
     lista_productos=admin.get_productos_de_cliente(cliente_name)
     lista_clientes=admin.get_lista_clientes()
     return render_template('prodXCliente.html',lista_clientes=lista_clientes,lista_productos=lista_productos)
-
-#@app.route('/productosCliente',methods=['POST'])
-#@login_required
-#def prodXClienteP():
     
+@app.route('/clientesProductos',methods=['GET'])
+@login_required
+def clienteXProdG():
+    admin=AdminDB('archivo.csv')
+    lista=admin.get_lista_productos()
+    return render_template('clientesXProd.html',lista_productos=lista)
+
+@app.route('/clientesProductos/<producto_name>',methods=['GET'])
+@login_required
+def clienteXProdP(producto_name):
+    admin=AdminDB('archivo.csv')
+    lista_productos=admin.get_lista_productos()
+    lista_clientes=admin.get_clientes_de_productos(producto_name)
+    return render_template('clientesXProd.html',lista_clientes=lista_clientes,lista_productos=lista_productos)    
+
 @app.route('/login', methods=['GET'])
 def loginG():
     form = FormularioLogin()    

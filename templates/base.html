@@ -1,5 +1,9 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/fixes.html" as fixes %}
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="/static/images/favicon.ico">
+{% endblock %}
 
 {% block navbar %}
 
@@ -18,7 +22,7 @@
                 <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   <li><a href="/productosCliente">Productos por cliente</a></li>
-                  <li><a href="#">Clientes por producto</a></li>
+                  <li><a href="/clientesProductos">Clientes por producto</a></li>
                   <li><a href="#">Productos mas vendidos</a></li>
                   <li><a href="#">Clientes con mayor gasto</a></li>
                 </ul>

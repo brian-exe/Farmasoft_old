@@ -59,4 +59,31 @@ class AdminDB():
                     lista_productos.append(lista)
                     
             return lista_productos
+
+    def get_lista_productos(self):
+        with open(self.ruta_archivo, 'r') as f:
+            reader = csv.reader(f)
+            lista_productos=[]
+            indice=self.indices['iproducto']
+            linea = next(reader)#Para quitar los titulos de los resultados
+            for linea in reader:
+                lista_productos.append(linea[indice])
+            return list(set(lista_productos))
+            
+    def get_clientes_de_productos(self,producto_name):
+        with open(self.ruta_archivo, 'r') as f:
+            reader = csv.reader(f)
+            lista_clientes=[]
+            indiceP=self.indices['iproducto']
+            titulos=['Cliente','Cantidad','Precio']
+            lista_clientes.append(titulos)
+            for linea in reader:
+                if (linea[indiceP]==producto_name):
+                    cliente=linea[self.indices['icliente']]
+                    cantidad=linea[self.indices['icantidad']]
+                    precio=linea[self.indices['iprecio']]
+                    lista=[cliente,cantidad,precio]
+                    lista_clientes.append(lista)
+                    
+            return lista_clientes
             
