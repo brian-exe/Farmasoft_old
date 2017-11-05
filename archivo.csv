@@ -1,5 +1,6 @@
 CODIGO,PRODUCTO,CLIENTE,CANTIDAD,PRECIO
 00001,Aliviol 3000,Farmacia Nueva Chingolo,1,24.500
+00001,Aliviol 3000,Farmacia Nueva Chingolo,1,24.500
 000123,Loratadina 300 ml,Farmacia Mariano Moreno,2,52.305
 00356,Amoxcicilina 1000,Farmacia San Martin,3,24.500
 00111,Buscapina x 14,Farmacia Faustino Sarmiento,4,24.500
@@ -13,3 +14,4 @@ CODIGO,PRODUCTO,CLIENTE,CANTIDAD,PRECIO
 123456,TEST 1,Juan,60000,1.50
 123456,TEST 2,Juan,100,1.50
 123456,TEST 3,Juan,600,1.50
+1234,Cafiaspirina,Ezequiel,100,5.50

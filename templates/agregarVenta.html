@@ -7,53 +7,57 @@ Agregar Producto
 {% block content %}
 {{ formulario.csrf_token }}
 <div class="container-fluid">
-    <form class="form-horizontal" method="POST" action="#">
-    {{ formulario.hidden_tag() }}
-        <div class="form-group col-md-10">
-            <div class="form-group">
-            {{ formulario.codigo.label(class="control-label col-md-2") }}
-                <div class="col-md-10">
-                    {{ formulario.codigo(class_="form-control") }}
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <h1>Agregar Venta </h1>
+            <form class="form-horizontal" method="POST" action="#">
+            {{ formulario.hidden_tag() }}
+                <div class="form-group col-md-10">
+                    <div class="form-group">
+                    {{ formulario.codigo.label(class="control-label col-md-2") }}
+                        <div class="col-md-10">
+                            {{ formulario.codigo(class_="form-control") }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    {{ formulario.producto.label(class="control-label col-md-2") }}
+                        <div class="col-md-10">
+                            {{ formulario.producto(class_="form-control") }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    {{ formulario.cliente.label(class="control-label col-md-2") }}
+                    <div class="col-md-10">
+                        {{ formulario.cliente(class_="form-control") }}
+                    </div>
+                    </div>
+                    <div class="form-group">
+                    {{ formulario.cantidad.label(class="control-label col-md-2") }}
+                    <div class="col-md-10">    
+                        {{ formulario.cantidad(class_="form-control") }}
+                    </div>
+                    </div>
+                    <div class="form-group">
+                    {{ formulario.precio.label(class="control-label col-md-2") }}
+                    <div class="col-md-10">
+                        {{ formulario.precio(class_="form-control") }}
+                    </div>
+                    </div>
+                    {{formulario.submit(class="btn btn-default")}}
                 </div>
-            </div>
-            <div class="form-group">
-            {{ formulario.producto.label(class="control-label col-md-2") }}
-                <div class="col-md-10">
-                    {{ formulario.producto(class_="form-control") }}
-                </div>
-            </div>
-            <div class="form-group">
-            {{ formulario.cliente.label(class="control-label col-md-2") }}
-            <div class="col-md-10">
-                {{ formulario.cliente(class_="form-control") }}
-            </div>
-            </div>
-            <div class="form-group">
-            {{ formulario.cantidad.label(class="control-label col-md-2") }}
-            <div class="col-md-10">    
-                {{ formulario.cantidad(class_="form-control") }}
-            </div>
-            </div>
-            <div class="form-group">
-            {{ formulario.precio.label(class="control-label col-md-2") }}
-            <div class="col-md-10">
-                {{ formulario.precio(class_="form-control") }}
-            </div>
-            </div>
-            {{formulario.submit(class="btn btn-default")}}
+                
+                {% if formulario.errors %}
+                    {{ formulario.errors }}
+                {% endif %}
+                
+                {% for fieldName, errorMessages in formulario.errors.items() %}
+                {% for err in errorMessages %}
+                    <p>{{err}}</p>
+                {% endfor %}
+            {% endfor %}
+            </form>
         </div>
-        
-        {% if formulario.errors %}
-            {{ formulario.errors }}
-        {% endif %}
-        
-        {% for fieldName, errorMessages in formulario.errors.items() %}
-        {% for err in errorMessages %}
-            <p>{{err}}</p>
-        {% endfor %}
-    {% endfor %}
-    </form>
-
+    </div>
 </div>
 {% endblock %}
 {% block scripts%}

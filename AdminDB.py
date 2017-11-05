@@ -1,4 +1,5 @@
 from validar import *
+import operator
 
 class AdminDB():
     def __init__(self,ruta=''):
@@ -16,7 +17,7 @@ class AdminDB():
             lista = list(reader)
         return lista
         
-    def agregar(self,form):
+    def agregar_venta(self,form):
         linea=''
         linea +=str(form.codigo.data)+','
         linea +=str(form.producto.data)+','
@@ -86,4 +87,54 @@ class AdminDB():
                     lista_clientes.append(lista)
                     
             return lista_clientes
-            
+    #Metodo que retorna todos los productos ordenados por cantidad de ventas
+    def get_mas_vendidos(self):
+        with open(self.ruta_archivo,'r') as f:
+            reader=csv.reader(f)
+            dict_resultados={}
+            primer_linea=next(reader)#Desapilo la primer linea#
+            for linea in reader:
+                producto=linea[self.indices['iproducto']]
+                cantidad=int(linea[self.indices['icantidad']])
+                if (producto in dict_resultados):
+                    cant_actual=int(dict_resultados[producto])
+                    dict_resultados[producto]=cant_actual+cantidad
+                else:
+                    dict_resultados[producto]=cantidad
+        return sorted(dict_resultados.items(), key=operator.itemgetter(1),reverse=True)
+        
+    #Metodo que retorna la cantidad de resultados deseados a partir de todos los mas vendidos
+    def get_cant_mas_vendidos(self,cant_resultados):
+        total=self.get_mas_vendidos()
+        resultado=[]
+        resultado.append(['Producto','Cantidad'])
+        iteraciones=min(int(cant_resultados),len(total))
+        for i in range(int(iteraciones)):
+            resultado.append(total[i])
+        return resultado
+        
+    #Metodo que retorna todos los clientes ordenados por compras (precio)
+    def get_mejores_clientes(self):
+        with open(self.ruta_archivo,'r') as f:
+            reader=csv.reader(f)
+            dict_resultados={}
+            primer_linea=next(reader)#Desapilo la primer linea#
+            for linea in reader:
+                cliente=linea[self.indices['icliente']]
+                precio=float(linea[self.indices['iprecio']])
+                if (cliente in dict_resultados):
+                    precio_actual=float(dict_resultados[cliente])
+                    dict_resultados[cliente]=precio_actual+precio
+                else:
+                    dict_resultados[cliente]=precio
+        return sorted(dict_resultados.items(), key=operator.itemgetter(1),reverse=True)
+        
+    #Metodo que retorna la cantidad de resultados deseados a partir de los mejores clientes
+    def get_cant_mejores_clientes(self,cant_resultados):
+        total=self.get_mejores_clientes()
+        resultado=[]
+        resultado.append(['Cliente','Precio'])
+        iteraciones=min(int(cant_resultados),len(total))
+        for i in range(int(iteraciones)):
+            resultado.append(total[i])
+        return resultado

@@ -3,6 +3,8 @@
 {% block head %}
 {{ super() }}
 <link rel="shortcut icon" href="/static/images/favicon.ico">
+<link rel="stylesheet" type="text/css" href="/static/stylesheets/bootstrap_theme/bootstrap-theme.css">
+<link rel="stylesheet" type="text/css" href="/static/stylesheets/bootstrap_theme/bootstrap-theme.min.css">
 {% endblock %}
 
 {% block navbar %}
@@ -10,7 +12,7 @@
  <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">Farmasoft</a>
+      <a class="navbar-brand" href="/">Farmasoft</a>
     </div>
     <ul class="nav navbar-nav">
         <li><a href="/">Inicio</a></li>
@@ -23,8 +25,8 @@
                 <ul class="dropdown-menu">
                   <li><a href="/productosCliente">Productos por cliente</a></li>
                   <li><a href="/clientesProductos">Clientes por producto</a></li>
-                  <li><a href="#">Productos mas vendidos</a></li>
-                  <li><a href="#">Clientes con mayor gasto</a></li>
+                  <li><a href="/masVendidos">Productos mas vendidos</a></li>
+                  <li><a href="/mejoresClientes">Clientes con mayor gasto</a></li>
                 </ul>
             </li>
         {% endif %}

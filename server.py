@@ -1,8 +1,8 @@
 #!/home/brian/Envs/env1/bin/python3.5
 
-from flask import Flask,request, url_for
+from flask import Flask,request, url_for,render_template,redirect
+from flask_script import Manager
 from flask_bootstrap import Bootstrap
-from flask import render_template,redirect
 from flask_wtf import FlaskForm
 from wtforms import *
 from wtforms.validators import *
@@ -10,64 +10,23 @@ from flask_login import LoginManager, login_user, login_required, logout_user
 from formularios import *
 from AdminDB import *
 from validar import ValidationException
+from user_administration import User,UserRepository
+
 import csv
 
-class User():
-    def __init__(self, name, password,active =False):
-        self.name = name
-        self.password = password
-        self.active = active
 
-    def __repr__(self):
-        return '<User %r>' % self.name
-    def is_authenticated(self):
-        return True
-    def is_active(self):
-        return self.active
-    def is_anonymous(self):
-        return False
-    def get_id(self):
-        return str(self.name)
+ARCHIVO_DB='archivo.csv'
+ARCHIVO_USUARIOS='usuarios.csv'
 
-class UserRepository():
-    def __init__(self,path=''):
-        self.filePath=path
-    def authenticate_user(self,name,password):
-        with open(self.filePath,'r') as usersFile:
-            user = None
-            for line in usersFile:
-                line_list= line.split(",")
-                str_user=line_list[0].strip()
-                str_pass=line_list[1].strip()
-                str_active=line_list[2].strip()
-                bool_active=str_active=='1'
-
-                if (name == str_user):
-                    if (password== str_pass):
-                        user=User(name,password,bool_active)
-        return user
-    def getUser(self,name):
-        with open(self.filePath,'r') as usersFile:
-            user = None
-            for line in usersFile:
-                line_list= line.split(",")
-                str_user=line_list[0].strip()
-                str_pass=line_list[1].strip()
-                str_active=line_list[2].strip()
-                bool_active=str_active=='1'
-                
-                if (name == str_user):
-                    user=User(name,str_pass,bool_active)
-        return user
-
-              
-   
 app= Flask(__name__)
 app.config['SECRET_KEY'] = 'UN STRING MUY DIFICIL'
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 boot = Bootstrap(app)
 login_manager=LoginManager()
 login_manager.init_app(app)
+manager=Manager(app)
+
+#manager.add_command('runserver', CustomServer())
 
 @app.route('/')
 @app.route('/index')
@@ -78,7 +37,7 @@ def index():
 @login_required
 def listarCsv():
     try:
-        admin = AdminDB('archivo.csv')
+        admin = AdminDB(ARCHIVO_DB)
         archivo = admin.dame_list_archivo()
         return render_template('lista.html',model=archivo)
     except ValidationException as e:
@@ -95,8 +54,8 @@ def agregarVPost():
     formulario=FormularioNuevaVenta()
     valida=formulario.validate_on_submit()
     if (valida):
-        admin = AdminDB('archivo.csv')
-        admin.agregar(formulario)
+        admin = AdminDB(ARCHIVO_DB)
+        admin.agregar_venta(formulario)
         formulario=FormularioNuevaVenta()
         return render_template('agregarVenta.html',formulario=formulario,mostrar_mje=True)
     return render_template('error.html',formulario=formulario,valida=valida)
@@ -109,11 +68,11 @@ def altaG():
     
 @app.route('/alta',methods=['POST'])
 def altaP():
-    admin =AdminDB('usuarios.csv')
+    admin =AdminDB(ARCHIVO_USUARIOS)
     form = FormularioAlta()
     if (form.validate_on_submit()):
         if(form.password.data != form.confirm.data):
-            return "Los passwords no coinciden!!! Hdp!"
+            return "Los passwords no coinciden!!!"
         else:
             admin.agregar(form.username.data,form.password.data)
             return render_template('alta.html',form=form,mostrar_mje=True)
@@ -122,37 +81,65 @@ def altaP():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return UserRepository('usuarios.csv').getUser(user_id)
+    return UserRepository(ARCHIVO_USUARIOS).getUser(user_id)
     
 @app.route('/productosCliente',methods=['GET'])
+@app.route('/productosCliente/',methods=['GET'])
 @login_required
 def prodXClienteG():
-    admin=AdminDB('archivo.csv')
+    admin=AdminDB(ARCHIVO_DB)
     lista=admin.get_lista_clientes()
     return render_template('prodXCliente.html',lista_clientes=lista)
 
-@app.route('/productosCliente/<cliente_name>',methods=['GET'])
+@app.route('/productosCliente/cliente=<cliente_name>',methods=['GET'])
 @login_required
 def prodXClienteP(cliente_name):
-    admin=AdminDB('archivo.csv')
+    admin=AdminDB(ARCHIVO_DB)
     lista_productos=admin.get_productos_de_cliente(cliente_name)
     lista_clientes=admin.get_lista_clientes()
-    return render_template('prodXCliente.html',lista_clientes=lista_clientes,lista_productos=lista_productos)
+    return render_template('prodXCliente.html',lista_clientes=lista_clientes,lista_productos=lista_productos,busqueda=cliente_name)
     
 @app.route('/clientesProductos',methods=['GET'])
+@app.route('/clientesProductos/',methods=['GET'])
 @login_required
 def clienteXProdG():
-    admin=AdminDB('archivo.csv')
+    admin=AdminDB(ARCHIVO_DB)
     lista=admin.get_lista_productos()
     return render_template('clientesXProd.html',lista_productos=lista)
 
-@app.route('/clientesProductos/<producto_name>',methods=['GET'])
+@app.route('/clientesProductos/producto=<producto_name>',methods=['GET'])
 @login_required
 def clienteXProdP(producto_name):
-    admin=AdminDB('archivo.csv')
+    admin=AdminDB(ARCHIVO_DB)
     lista_productos=admin.get_lista_productos()
     lista_clientes=admin.get_clientes_de_productos(producto_name)
-    return render_template('clientesXProd.html',lista_clientes=lista_clientes,lista_productos=lista_productos)    
+    return render_template('clientesXProd.html',lista_clientes=lista_clientes,lista_productos=lista_productos,busqueda=producto_name)
+
+@app.route('/masVendidos',methods=['GET'])
+@app.route('/masVendidos/',methods=['GET'])
+@login_required
+def masVendidosG():
+    return render_template('masVendidos.html')
+
+@app.route('/masVendidos/cantResultados=<cant_resultados>',methods=['GET'])
+@login_required
+def masVendidosP(cant_resultados):
+    admin=AdminDB(ARCHIVO_DB)
+    lista_resultados=admin.get_cant_mas_vendidos(cant_resultados)
+    return render_template('masVendidos.html', lista_resultados=lista_resultados)
+
+@app.route('/mejoresClientes',methods=['GET'])
+@app.route('/mejoresClientes/',methods=['GET'])
+@login_required
+def mejoresClientesG():
+    return render_template('mejoresClientes.html')
+    
+@app.route('/mejoresClientes/cantResultados=<cant_resultados>',methods=['GET'])
+@login_required
+def mejoresClientesP(cant_resultados):
+    admin=AdminDB(ARCHIVO_DB)
+    lista_resultados=admin.get_cant_mejores_clientes(cant_resultados)
+    return render_template('mejoresClientes.html', lista_resultados=lista_resultados)
 
 @app.route('/login', methods=['GET'])
 def loginG():
@@ -164,7 +151,7 @@ def loginG():
 def loginP():
     form = FormularioLogin()
     if form.validate_on_submit():
-        repository = UserRepository('usuarios.csv')
+        repository = UserRepository(ARCHIVO_USUARIOS)
         user = repository.authenticate_user(form.name.data,form.password.data)
         if (user != None):
             login_user(user)
@@ -201,4 +188,4 @@ def error_interno(e):
 ##Fin Manejo de errores#################
 
 if(__name__ == '__main__'):
-    app.run(debug=True,host='0.0.0.0')
+    manager.run()

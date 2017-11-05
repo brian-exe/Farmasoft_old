@@ -9,7 +9,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <h2>Busqueda de clientes que hayan comprado un producto</h2>
+            <h2>Busqueda de clientes por producto</h2>
         </div>
     </div>
     <div class="row">
@@ -18,7 +18,7 @@
 
             <ul id="clientList">
                 {% for producto in lista_productos %}
-                    <li><a href="/clientesProductos/{{producto}}" >{{producto}}</a></li>
+                    <li><a href="/clientesProductos/producto={{producto}}" >{{producto}}</a></li>
                 {% endfor %}
 
             </ul> 
@@ -28,7 +28,7 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
         <br>
-        <h4>Resultados</h4>
+        <h4>Resultados para <strong>{{busqueda}}</strong> </h4>
             <table class="table table-striped">
                 <tr>
                 {% for item in lista_clientes[0] %}

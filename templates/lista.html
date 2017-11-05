@@ -5,29 +5,43 @@ Listar Archivo
 
 
 {% block content %}
-<h1>Listado de productos</h1>
-<hr>
-
 <div class="container">
-    <table class="table table-striped">
-        <tr>
-        {% for item in model[0] %}
-            <th>
-            {{ item }}
-            </th>
-        {% endfor %}
-        </tr>
-        {% for i in range(1,model|length) %}
-        <tr>
-            {% for j in range(model[i]|length)%}
-                <td>                    
-                    {{ model[i][j] }}
-                </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-<a href="AgregarVenta"> Agregar Producto</a>
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Listado de productos</h1>
+            <hr>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <a href="AgregarVenta" class="btn btn-primary"> Agregar Venta</a>
+            <br>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <tr>
+                {% for item in model[0] %}
+                    <th>
+                    {{ item }}
+                    </th>
+                {% endfor %}
+                </tr>
+                {% for i in range(1,model|length) %}
+                <tr>
+                    {% for j in range(model[i]|length)%}
+                        <td>                    
+                            {{ model[i][j] }}
+                        </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

@@ -18,7 +18,7 @@
 
             <ul id="clientList">
                 {% for cliente in lista_clientes %}
-                    <li><a href="/productosCliente/{{cliente}}" >{{cliente}}</a></li>
+                    <li><a href="/productosCliente/cliente={{cliente}}" >{{cliente}}</a></li>
                 {% endfor %}
 
             </ul> 
@@ -28,7 +28,7 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
         <br>
-        <h4>Resultados</h4>
+        <h4>Resultados para <strong>{{busqueda}}</strong> </h4>
             <table class="table table-striped">
                 <tr>
                 {% for item in lista_productos[0] %}
