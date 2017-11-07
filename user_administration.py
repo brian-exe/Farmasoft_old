@@ -1,3 +1,5 @@
+import csv
+
 class User():
     def __init__(self, name, password,active =False):
         self.name = name
@@ -18,6 +20,15 @@ class User():
 class UserRepository():
     def __init__(self,path=''):
         self.filePath=path
+
+    def add_user(self,username,password):
+        archivo = open(self.filePath,'a')
+        try:
+            linea= str(username)+','+str(password)+','+'1'+'\n'
+            archivo.write(linea)
+        finally:
+            archivo.close()
+
     def authenticate_user(self,name,password):
         with open(self.filePath,'r') as usersFile:
             user = None

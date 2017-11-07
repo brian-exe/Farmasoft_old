@@ -1,4 +1,5 @@
 from validar import *
+import csv
 import operator
 
 class AdminDB():
@@ -27,13 +28,6 @@ class AdminDB():
         with open(self.ruta_archivo, 'a') as f:
             f.write(linea)
                   
-    def agregar(self,usuario,password):
-        archivo = open(self.ruta_archivo,'a')
-        try:
-            linea= str(usuario)+','+str(password)+','+'1'+'\n'
-            archivo.write(linea)
-        finally:
-            archivo.close()
     def get_lista_clientes(self):
         with open(self.ruta_archivo, 'r') as f:
             reader = csv.reader(f)

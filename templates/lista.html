@@ -9,20 +9,20 @@ Listar Archivo
     <div class="row">
         <div class="col-md-12">
             <h1>Listado de productos</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <a href="AgregarVenta" class="btn btn-primary pull-right"> Agregar Venta</a>
+            <br>
             <hr>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            <a href="AgregarVenta" class="btn btn-primary"> Agregar Venta</a>
-            <br>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-striped">
+            <table class="table table-hover">
                 <tr>
                 {% for item in model[0] %}
                     <th>

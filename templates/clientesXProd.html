@@ -14,7 +14,7 @@
     </div>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <input type="text" id="search-input" onkeyup="showResults()" placeholder="Ingrese al menos tres letras para buscar.." class="form-control">
+            <input type="text" id="search-input" onkeyup="showResults()" placeholder="Ingrese al menos tres letras del producto a buscar.." class="form-control">
 
             <ul id="clientList">
                 {% for producto in lista_productos %}
@@ -23,31 +23,39 @@
 
             </ul> 
         </div>
+        <hr>
     </div>
-    {% if lista_clientes|length >0 %}
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-        <br>
-        <h4>Resultados para <strong>{{busqueda}}</strong> </h4>
-            <table class="table table-striped">
-                <tr>
-                {% for item in lista_clientes[0] %}
-                    <th>
-                    {{ item }}
-                    </th>
-                {% endfor %}
-                </tr>
-                {% for i in range(1,lista_clientes|length) %}
-                <tr>
-                    {% for j in range(lista_clientes[i]|length)%}
-                        <td>                    
-                            {{ lista_clientes[i][j] }}
-                        </td>
+    {% if lista_clientes %}
+        {% if lista_clientes|length >1 %}
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+            <br>
+            <h4>Resultados para <strong>"{{busqueda}}"</strong> </h4>
+                <table class="table table-hover">
+                    <tr>
+                    {% for item in lista_clientes[0] %}
+                        <th>
+                        {{ item }}
+                        </th>
                     {% endfor %}
-                </tr>
-                {% endfor %}
+                    </tr>
+                    {% for i in range(1,lista_clientes|length) %}
+                    <tr>
+                        {% for j in range(lista_clientes[i]|length)%}
+                            <td>                    
+                                {{ lista_clientes[i][j] }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+            </div>
+         </div>
+        {% else %}
+        <div class="col-md-10 col-md-offset-1">
+            <br>
+            <h4>Sin resultados para <strong>"{{busqueda}}"</strong> </h4>
         </div>
-     </div>
+        {% endif %}
     {% endif %}
 </div>
 <script>

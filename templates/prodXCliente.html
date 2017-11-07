@@ -14,7 +14,7 @@
     </div>
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <input type="text" id="search-input" onkeyup="showResults()" placeholder="Ingrese al menos tres letras para buscar.." class="form-control">
+            <input type="text" id="search-input" onkeyup="showResults()" placeholder="Ingrese al menos tres letras del cliente a buscar.." class="form-control">
 
             <ul id="clientList">
                 {% for cliente in lista_clientes %}
@@ -29,7 +29,7 @@
         <div class="col-md-10 col-md-offset-1">
         <br>
         <h4>Resultados para <strong>{{busqueda}}</strong> </h4>
-            <table class="table table-striped">
+            <table class="table table-hover">
                 <tr>
                 {% for item in lista_productos[0] %}
                     <th>
