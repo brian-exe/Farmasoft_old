@@ -28,11 +28,13 @@ configurador = Config()
 app.config['ARCHIVO_DB']=configurador.get_path_to_data_file()
 app.config['ARCHIVO_USUARIOS']=configurador.get_path_to_users_file()
 
+'''Metodo encargado de leer el archivo de configuraciones y recargar las variables ARCHIVO_DB y ARCHIVO_USUARIOS'''
 def recargarConfiguraciones():
     if (configurador.reload_configurations()):
         app.config['ARCHIVO_DB']=configurador.get_path_to_data_file()
         app.config['ARCHIVO_USUARIOS']=configurador.get_path_to_users_file()
 
+#INICIO RUTAS#
 @app.route('/')
 @app.route('/index')
 def index():
@@ -79,9 +81,7 @@ def altaP():
     user_admin =UserRepository(app.config['ARCHIVO_USUARIOS'])
     form = FormularioAlta()
     if (form.validate_on_submit()):
-        if(form.password.data != form.confirm.data):
-            return "Los passwords no coinciden!!!"
-        else:
+        if(form.password.data == form.confirm.data):
             user_admin.add_user(form.username.data,form.password.data)
             return render_template('alta.html',form=form,mostrar_mje=True)
             
@@ -135,9 +135,9 @@ def masVendidosP(cant_resultados):
     admin=AdminDB(app.config['ARCHIVO_DB'])
     lista_resultados=admin.get_cant_mas_vendidos(cant_resultados)
     return render_template('masVendidos.html', lista_resultados=lista_resultados)
-
-@app.route('/mejoresClientes',methods=['GET'])
+    
 @app.route('/mejoresClientes/',methods=['GET'])
+@app.route('/mejoresClientes',methods=['GET'])
 @login_required
 def mejoresClientesG():
     return render_template('mejoresClientes.html')
@@ -154,7 +154,7 @@ def loginG():
     if (current_user.is_authenticated):
         return redirect('/')
     else:
-        form = FormularioLogin()    
+        form = FormularioLogin()
         return (render_template('login.html',form = form))
     
     
@@ -177,15 +177,15 @@ def logout():
     logout_user()
     return render_template('index.html')
     
-@app.route('/session', methods=['GET'])
-def return_session():
-    return render_template('session.html')
+#FIN SECCION RUTAS#
+
 
 ##Manejo de errores####################
 
+'''Error handler personalizado para atrapar las excepciones de validacion que pudieran ocurrir'''
 @app.errorhandler(ValidationException)
 def custom_handler(e):
-    return render_template('customError.html', mensaje=e.message ),500
+    return render_template('customError.html', mensaje=e.message )
     
 @app.errorhandler(401)
 def not_authorized(e):

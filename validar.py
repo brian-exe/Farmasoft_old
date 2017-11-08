@@ -76,7 +76,7 @@ class Validador():
             
     def comprobarEntero(self,campo,numLinea):
         try:
-            aux=int(campo)#Se puede hacer con isinstance(valor,tipo)
+            aux=int(campo)
         except ValueError:
             raise ValidationException("Error en Linea nro --> "+str(numLinea)+" tipo no admitido en campo cantidad.")
             
