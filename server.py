@@ -1,5 +1,3 @@
-#!/home/brian/Envs/env1/bin/python3.5
-
 from flask import Flask,request, url_for,render_template,redirect
 from flask_script import Manager
 from flask_bootstrap import Bootstrap
@@ -91,8 +89,9 @@ def altaP():
 def load_user(user_id):
     return UserRepository(app.config['ARCHIVO_USUARIOS']).getUser(user_id)
     
-@app.route('/productosCliente',methods=['GET'])
+
 @app.route('/productosCliente/',methods=['GET'])
+@app.route('/productosCliente',methods=['GET'])
 @login_required
 def prodXClienteG():
     admin=AdminDB(app.config['ARCHIVO_DB'])
@@ -106,9 +105,9 @@ def prodXClienteP(cliente_name):
     lista_productos=admin.get_productos_de_cliente(cliente_name)
     lista_clientes=admin.get_lista_clientes()
     return render_template('prodXCliente.html',lista_clientes=lista_clientes,lista_productos=lista_productos,busqueda=cliente_name)
-    
-@app.route('/clientesProductos',methods=['GET'])
+
 @app.route('/clientesProductos/',methods=['GET'])
+@app.route('/clientesProductos',methods=['GET'])
 @login_required
 def clienteXProdG():
     admin=AdminDB(app.config['ARCHIVO_DB'])
@@ -123,8 +122,8 @@ def clienteXProdP(producto_name):
     lista_clientes=admin.get_clientes_de_productos(producto_name)
     return render_template('clientesXProd.html',lista_clientes=lista_clientes,lista_productos=lista_productos,busqueda=producto_name)
 
-@app.route('/masVendidos',methods=['GET'])
 @app.route('/masVendidos/',methods=['GET'])
+@app.route('/masVendidos',methods=['GET'])
 @login_required
 def masVendidosG():
     return render_template('masVendidos.html')
@@ -189,7 +188,7 @@ def custom_handler(e):
     
 @app.errorhandler(401)
 def not_authorized(e):
-    return render_template('noLogin.html')
+    return redirect(url_for('loginG'))
 
 @app.errorhandler(404)
 def not_found(e):
