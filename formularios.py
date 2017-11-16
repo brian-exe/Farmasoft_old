@@ -21,3 +21,9 @@ class FormularioAlta(FlaskForm):
     password = PasswordField('New Password', [DataRequired(message="Este campo es obligatorio"),EqualTo('confirm', message='Passwords must match')])
     confirm = PasswordField('Repeat Password', [DataRequired(message="Este campo es obligatorio")])
     submit = SubmitField('Save')
+    
+class FormularioEditarUsuario(FlaskForm):
+    username=StringField('Nombre de usuario',validators=[DataRequired(message="Este campo es obligatorio")])
+    roles = SelectField(u'Rol de usuario',coerce=str)
+    #role=StringField('Nombre de usuario',validators=[DataRequired(message="Este campo es obligatorio")])
+    submit = SubmitField('Guardar')

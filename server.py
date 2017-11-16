@@ -17,9 +17,8 @@ import csv
 
 
 app= Flask(__name__)
-app.config['SECRET_KEY'] = 'UN STRING MUY DIFICIL'
-app.config['BOOTSTRAP_SERVE_LOCAL'] = True
-app.config['TRAP_HTTP_EXCEPTIONS']=True
+app.config['SECRET_KEY'] = '$$hard$$secret$$key$$'
+#app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 boot = Bootstrap(app)
 login_manager=LoginManager()
 login_manager.init_app(app)
@@ -148,6 +147,33 @@ def mejoresClientesP(cant_resultados):
     admin=AdminDB(app.config['ARCHIVO_DB'])
     lista_resultados=admin.get_cant_mejores_clientes(cant_resultados)
     return render_template('mejoresClientes.html', lista_resultados=lista_resultados)
+    
+    
+@app.route('/editarUsuarios',methods=['GET'])
+def editar_usuarios():
+    if not current_user.is_admin():
+        return "No es admin!"
+    else:
+        user_admin =UserRepository(app.config['ARCHIVO_USUARIOS'])
+        model=user_admin.get_user_list()
+        return render_template('editarUsuarios.html',model=model)
+    
+@app.route('/editarUsuario/<usuario>',methods=['GET','POST'])
+def editar_usuario(usuario):
+    form=FormularioEditarUsuario()
+    user_admin =UserRepository(app.config['ARCHIVO_USUARIOS'])
+    user=user_admin.getUser(usuario)
+    form.username.data=user.name
+    #form.role.data=user.role
+    form.roles.choices=user_admin.get_role_list()
+    
+    if form.validate_on_submit():
+        user_admin.change_role_user(form.username.data,form.roles.data)
+        return redirect(url_for('editar_usuarios'))
+
+    return render_template('editarUsuario.html',formulario=form)
+
+#@app.route('/cambiarArchivo')
 
 @app.route('/login', methods=['GET'])
 def loginG():
