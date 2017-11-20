@@ -1,10 +1,8 @@
-#Farmasoft
-
 Farmasoft
 ==========
 
-##Nueva version disponible!
-###Ver cambios en [release notes](https://github.com/brian-exe/Farmasoft/blob/master/release_notes.md)
+## Nueva version disponible!
+### Ver cambios en [release notes](https://github.com/brian-exe/Farmasoft/blob/master/release_notes.md)
 
 INTRODUCCIÓN:
 -------------
@@ -52,4 +50,4 @@ CLASES UTILIZADAS:
 + AdminDB: Clase encargada de la lectura/escritura como asi tambien de realizar las distintas consultas sobre el archivo de datos de ventas.
 + Config: Pequeña clase dedicada para leer el archivo de condfiguraciones.
 
-##Autor: Ezequiel Aciar
+### Autor: Ezequiel Aciar
