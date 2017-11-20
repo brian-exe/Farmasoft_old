@@ -68,20 +68,20 @@ class Validador():
                  
     def comprobarCantidadCampos(self,linea,numLinea):
         if (len(linea) != 5):
-            raise ValidationException("Error en Linea nro --> "+str(numLinea)+" del archivo. Cantidad invalida de campos.")
+            raise ValidationException("Error en Linea nro "+str(numLinea)+" del archivo. Cantidad invalida de campos.")
             
     def comprobarCampoVacio(self,campo,numLinea):
         if(campo ==''):
-            raise ValidationException("Error en Linea nro --> "+str(numLinea)+" del  archivo. Campo vacío.")
+            raise ValidationException("Error en Linea nro "+str(numLinea)+" del  archivo. Campo vacío.")
             
     def comprobarEntero(self,campo,numLinea):
         try:
             aux=int(campo)
         except ValueError:
-            raise ValidationException("Error en Linea nro --> "+str(numLinea)+" tipo no admitido en campo cantidad.")
+            raise ValidationException("Error en Linea nro "+str(numLinea)+" tipo no admitido en campo cantidad.")
             
     def comprobarDecimal(self,campo,numLinea):
         try:
             aux=float(campo)
         except ValueError:
-            raise ValidationException("Error en Linea nro --> "+str(numLinea)+" tipo no admitido en campo precio.")
+            raise ValidationException("Error en Linea nro "+str(numLinea)+" tipo no admitido en campo precio.")

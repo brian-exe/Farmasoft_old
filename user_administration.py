@@ -98,3 +98,37 @@ class UserRepository():
                     tempfile.write(username+','+password+','+role+'\n')
         os.rename(temp, userfile)
     
+    def check_user_exists(self,username):
+        found=False
+        with open(self.filePath,'r') as f:
+            reader= csv.reader(f)
+            for line in reader:
+                if (line[0]==username):
+                    found=True
+        return found
+    
+    def validate_password(self, username,password):
+        is_ok=False
+        with open(self.filePath,'r') as f:
+            reader= csv.reader(f)
+            for line in reader:
+                if (line[0] == username):
+                    if(line[1] == password):
+                        is_ok=True
+        return is_ok
+    
+    def change_password(self,username,new_password):
+        temp=self.filePath + '-temp'
+        userfile=self.filePath
+        
+        with open(userfile, 'r') as csvFile:
+            with open(temp, 'w') as tempfile:
+                reader = csv.reader(csvFile, delimiter=',')
+                for line in reader:
+                    user=line[0]
+                    password=line[1]
+                    role=line[2]
+                    if (user==username):
+                        password=new_password
+                    tempfile.write(user+','+password+','+role+'\n')
+        os.rename(temp, userfile)

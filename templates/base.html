@@ -17,7 +17,9 @@
         <li><a href="/">Inicio</a></li>
         {% if current_user.is_authenticated %}
             <li><a href="/lista">Listar</a></li>
-            <li><a href="/AgregarVenta">Agregar Venta</a></li>
+            {% if current_user.is_admin() %}
+                <li><a href="/AgregarVenta">Agregar Venta</a></li>
+            {% endif %}
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Consultas
                 <span class="caret"></span></a>
@@ -32,16 +34,18 @@
     </ul>
     <ul class="nav navbar-nav navbar-right">
         {% if current_user.is_authenticated %}
-            {% if current_user.is_admin() %}
+            
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Configuraciones
                     <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                      <li><a href="/editarUsuarios">Editar roles usuarios</a></li>
-                      <li><a href="/cambiarArchivos">Cambiar archivos de datos</a></li>
+                        <li><a href="/cambiarPassword">Cambiar Password</a></li>
+                        {% if current_user.is_admin() %}
+                            <li><a href="/editarUsuarios">Editar roles usuarios</a></li>
+                            <li><a href="/cambiarArchivo">Cambiar archivos de datos</a></li>
+                        {% endif %}
                     </ul>
                 </li>
-            {% endif %}
             <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
         {% else %}
             <li><a href="/alta"><span class="glyphicon glyphicon-user"></span> Registrarse</a></li>

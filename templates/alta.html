@@ -26,6 +26,16 @@ singup_style.css
                     <p>{{err}}</p>
                 {% endfor %}
             {% endfor %}
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <ul class=flashes>
+              {% for message in messages %}
+                <h4><span class="label label-info">{{ message }}</span>&nbsp;</h4>
+              {% endfor %}
+              </ul>
+            {% endif %}
+            {% endwith %}
             
             {{ form.submit }}
             </a href="/alta">

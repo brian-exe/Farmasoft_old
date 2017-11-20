@@ -1,4 +1,4 @@
-from flask import Flask,request, url_for,render_template,redirect
+from flask import Flask,request,flash, url_for,render_template,redirect
 from flask_script import Manager
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
@@ -11,12 +11,11 @@ from validar import ValidationException
 from user_administration import User,UserRepository
 from Config import Config
 import csv
-
+from functools import wraps
 
 
 app= Flask(__name__)
 app.config['SECRET_KEY'] = '$$hard$$secret$$key$$'
-#app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 boot = Bootstrap(app)
 login_manager=LoginManager()
 login_manager.init_app(app)
@@ -24,6 +23,15 @@ manager=Manager(app)
 configurador = Config()
 app.config['ARCHIVO_DB']=configurador.get_path_to_data_file()
 app.config['ARCHIVO_USUARIOS']=configurador.get_path_to_users_file()
+
+def admin_needed(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_admin():
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('no_admin'))
+    return decorated_function
 
 '''Metodo encargado de leer el archivo de configuraciones y recargar las variables ARCHIVO_DB y ARCHIVO_USUARIOS'''
 def recargarConfiguraciones():
@@ -51,11 +59,14 @@ def listarCsv():
     
 @app.route('/AgregarVenta',methods=['GET'])
 @login_required
+@admin_needed
 def agregarVGet():
     form = FormularioNuevaVenta()
     return render_template('agregarVenta.html',formulario=form,mostrar_mje=False)
     
 @app.route('/AgregarVenta', methods=['POST'])
+@login_required
+@admin_needed
 def agregarVPost():
     formulario=FormularioNuevaVenta()
     valida=formulario.validate_on_submit()
@@ -64,7 +75,6 @@ def agregarVPost():
         admin.agregar_venta(formulario)
         formulario=FormularioNuevaVenta()
         return render_template('agregarVenta.html',formulario=formulario,mostrar_mje=True)
-    #formulario=FormularioNuevaVenta()
     return render_template('agregarVenta.html',formulario=formulario,mostrar_mje=False)
 
 @app.route('/alta',methods=['GET'])
@@ -79,9 +89,12 @@ def altaP():
     form = FormularioAlta()
     if (form.validate_on_submit()):
         if(form.password.data == form.confirm.data):
-            user_admin.add_user(form.username.data,form.password.data)
-            return render_template('alta.html',form=form,mostrar_mje=True)
-            
+            if not(user_admin.check_user_exists(form.username.data)):                
+                user_admin.add_user(form.username.data,form.password.data)
+                return render_template('alta.html',form=form,mostrar_mje=True)
+            else:
+                flash('El usuario ya existe')
+                return render_template('alta.html',form=form)
     return render_template('alta.html',form=form)
 
 @login_manager.user_loader
@@ -149,21 +162,21 @@ def mejoresClientesP(cant_resultados):
     
     
 @app.route('/editarUsuarios',methods=['GET'])
+@login_required
+@admin_needed
 def editar_usuarios():
-    if not current_user.is_admin():
-        return "No es admin!"
-    else:
-        user_admin =UserRepository(app.config['ARCHIVO_USUARIOS'])
-        model=user_admin.get_user_list()
-        return render_template('editarUsuarios.html',model=model)
+    user_admin =UserRepository(app.config['ARCHIVO_USUARIOS'])
+    model=user_admin.get_user_list()
+    return render_template('editarUsuarios.html',model=model)
     
 @app.route('/editarUsuario/<usuario>',methods=['GET','POST'])
+@login_required
+@admin_needed
 def editar_usuario(usuario):
     form=FormularioEditarUsuario()
     user_admin =UserRepository(app.config['ARCHIVO_USUARIOS'])
     user=user_admin.getUser(usuario)
     form.username.data=user.name
-    #form.role.data=user.role
     form.roles.choices=user_admin.get_role_list()
     
     if form.validate_on_submit():
@@ -172,7 +185,48 @@ def editar_usuario(usuario):
 
     return render_template('editarUsuario.html',formulario=form)
 
-#@app.route('/cambiarArchivo')
+@app.route('/cambiarArchivo',methods=['GET'])
+@login_required
+@admin_needed
+def cambiar_archivoG():
+    model = {}
+    model['lista_archivos']=configurador.get_lista_archivos()
+    #Obtengo el nombre del archivo actual mediante spliteando el path completo sin el nombre del archivo
+    model['archivo_actual']=configurador.ARCHIVO_DATOS.split(configurador.get_directory_data_file())[1]
+
+    return render_template('cambiarArchivo.html',model=model)
+
+@app.route('/cambiarArchivo/archivo=<archivo>',methods=['GET'])
+@login_required
+@admin_needed
+def cambiar_archivoP(archivo):
+    configurador.cambiar_archivo(archivo)
+    recargarConfiguraciones()
+
+    model = {}
+    model['lista_archivos']=configurador.get_lista_archivos()
+    #Obtengo el nombre del archivo actual mediante spliteando el path completo sin el nombre del archivo
+    model['archivo_actual']=configurador.ARCHIVO_DATOS.split(configurador.get_directory_data_file())[1]
+
+    return render_template('cambiarArchivo.html',model=model)
+
+@app.route('/cambiarPassword',methods=['GET','POST'])
+@login_required
+def cambiar_password():
+    form = FormularioCambiarPassword()
+    if (form.validate_on_submit()):
+        user_admin =UserRepository(app.config['ARCHIVO_USUARIOS'])
+        if not(user_admin.validate_password(current_user.name,form.actual_password.data)):
+            flash('La contraseña actual ingresada es incorrecta')
+            form = FormularioCambiarPassword()
+            return render_template('cambiarPassword.html',formulario=form)
+        else:
+            user_admin.change_password(current_user.name,form.nueva_password.data)
+            flash('La contraseña se cambió correctamente.')
+            form = FormularioCambiarPassword()
+            return render_template('cambiarPassword.html',formulario=form)
+    return render_template('cambiarPassword.html',formulario=form)
+
 
 @app.route('/login', methods=['GET'])
 def loginG():
@@ -193,7 +247,10 @@ def loginP():
             login_user(user)
             next = request.args.get('next')
             return redirect(next or url_for('index'))
-            
+        else:
+            flash('Usuario o contraseña inválida.')
+            return render_template('login.html', form=form)
+
     return render_template('login.html', form=form,error=True)
 
 @app.route("/logout")
@@ -201,6 +258,10 @@ def loginP():
 def logout():
     logout_user()
     return render_template('index.html')
+
+@app.route("/noAdmin")
+def no_admin():
+    return render_template('noAdmin.html')
     
 #FIN SECCION RUTAS#
 

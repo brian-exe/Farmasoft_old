@@ -3,6 +3,9 @@
 Farmasoft
 ==========
 
+##Nueva version disponible!
+###Ver cambios en [release notes](https://github.com/brian-exe/Farmasoft/blob/master/release_notes.md)
+
 INTRODUCCIÓN:
 -------------
 
